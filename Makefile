@@ -221,6 +221,23 @@ else ifeq ($(platform), miyoo)
    CFLAGS += -fno-unwind-tables -fno-asynchronous-unwind-tables 
    CFLAGS += -fmerge-all-constants -fno-math-errno -fno-stack-protector -fno-ident    
    CXXFLAGS := $(ASFLAGS) $(CFLAGS)
+else ifeq ($(platform), xydds)
+   EXT ?= so
+   TARGET := $(TARGET_NAME)_libretro.$(EXT)
+   CC = /opt/xydds/usr/bin/arm-linux-gcc
+   CXX = /opt/xydds/usr/bin/arm-linux-g++
+   fpic := -fPIC
+   SHARED := -shared -Wl,--version-script=$(CORE_DIR)/link.T -Wl,--no-undefined
+   LIBS += -lpthread
+   CFLAGS += -fomit-frame-pointer -ffast-math -marm -mfpu=neon-vfpv4 -mfloat-abi=hard
+   CFLAGS += -ffunction-sections -fdata-sections -flto 
+   CFLAGS += -falign-functions=1 -falign-jumps=1 -falign-loops=1
+   CFLAGS += -fomit-frame-pointer -ffast-math -fmerge-all-constants 
+   CFLAGS += -funsafe-math-optimizations -fsingle-precision-constant -fexpensive-optimizations
+   CFLAGS += -fno-unwind-tables -fno-asynchronous-unwind-tables 
+   CFLAGS += -fmerge-all-constants -fno-math-errno -fno-stack-protector -fno-ident
+   CFLAGS += -DARM -mcpu=cortex-a7
+   CXXFLAGS := $(ASFLAGS) $(CFLAGS)
 else ifeq ($(platform), vita)
    TARGET := $(TARGET_NAME)_libretro_vita.a
    CC = arm-vita-eabi-gcc
